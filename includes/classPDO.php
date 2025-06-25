@@ -59,6 +59,36 @@ class PdoMaaserApp
         $requetePrepare->execute();
         return $requetePrepare->rowCount()>0;
     }
+
+    public function verifierConnexion($email){
+        $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+           'SELECT * FROM utilisateurs WHERE email = :unEmail'
+        );
+        $requetePrepare->bindParam(':unEmail',$email,PDO::PARAM_STR);
+        $requetePrepare->execute();
+        $resultat = $requetePrepare-> fetch(PDO::FETCH_ASSOC);
+        return $resultat;
+    }
+
+    public function verifEmailExist($email){
+         $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+            'SELECT COUNT(*) FROM utilisateurs WHERE email = :unEmail'
+        );
+        $requetePrepare->bindParam(':unEmail',$email,PDO::PARAM_STR);
+        $requetePrepare->execute();
+        $resultat = $requetePrepare->fetchColumn();
+        return $resultat >0;
+    }
+
+     public function verifSourceRevenuExist($id){
+         $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+            'SELECT COUNT(*) FROM revenus WHERE utilisateur_id = :unId'
+        );
+        $requetePrepare->bindParam(':unId',$Id,PDO::PARAM_INT);
+        $requetePrepare->execute();
+        $resultat = $requetePrepare->fetchColumn();
+        return $resultat >0;
+    }
 }
 
 ?>

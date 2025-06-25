@@ -10,15 +10,27 @@ switch($action){
         $mdp = filter_input(INPUT_POST,'password',FILTER_SANITIZE_SPECIAL_CHARS);
         $confirmMdp = filter_input(INPUT_POST,'confirm_password',FILTER_SANITIZE_SPECIAL_CHARS);
 
-        if($mdp == $confirmMdp){
+        $emailExist =$bdd->verifEmailExist($email);
+
+        if($mdp == $confirmMdp && !$emailExist){
             $mdpHach= password_hash($mdp, PASSWORD_DEFAULT);
-            $bdd->creerNouvelUtilisateur($nom,$prenom,$email,$mdpHach);
+            $etat = $bdd->creerNouvelUtilisateur($nom,$prenom,$email,$mdpHach);
+            if($etat){
+                $message = "Inscription réussie !";
+                echo $message;
+                //include 'vues/v_message.php';
+                header('Refresh:3;index.php?uc=connexion');
+            }else{
+                $message = "L'inscription a échouée, veuillez réessayer.";
+                include 'vues/v_message.php';
+                header('Refresh:3;index.php?uc=inscription');
+            }
 
         }else{
-            echo 'mdp incorrect';
-            //$message =;
-            //include 'vues/v_erreur.php';
-            header('Refresh:3;Location:index.php?uc=inscription');
+            $message = "Le mot de passe de confirmation ne correspond pas au mot de passe ou l'email existe déjà ";
+            // include 'vues/v_message.php';
+            echo $message;
+            header('Refresh:3;index.php?uc=inscription');
         }
         break;
 }
