@@ -82,13 +82,54 @@ class PdoMaaserApp
 
      public function verifSourceRevenuExist($id){
          $requetePrepare=PdoMaaserApp::$monPdo->prepare(
-            'SELECT COUNT(*) FROM revenus WHERE utilisateur_id = :unId'
+            'SELECT COUNT(*) FROM sources_revenu WHERE utilisateur_id = :unId'
         );
-        $requetePrepare->bindParam(':unId',$Id,PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unId',$id,PDO::PARAM_INT);
         $requetePrepare->execute();
         $resultat = $requetePrepare->fetchColumn();
         return $resultat >0;
     }
+
+    public function getSourceRevenu($id){
+       $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+           'SELECT * FROM sources_revenu WHERE utilisateur_id = :unId'
+        );
+        $requetePrepare->bindParam(':unId', $id, PDO::PARAM_INT);
+        $requetePrepare->execute();
+        $resultat = $requetePrepare->fetchAll(PDO::FETCH_ASSOC);
+        return $resultat;
+    }
+
+      public function ajouterSourceRevenu($id, $newSourceRevenu){
+        $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+            'INSERT INTO sources_revenu(utilisateur_id, libelle) '
+            . 'VALUES (:unId, :unLibelle)'
+        );
+        $requetePrepare->bindParam(':unId',$id,PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unLibelle',$newSourceRevenu,PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->rowCount()>0;
+    }
+
+    public function supprimerSourceRevenu($sourceId){
+        $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+            'DELETE FROM sources_revenu WHERE id = :sourceId'
+        );
+        $requetePrepare->bindParam(':sourceId', $sourceId ,PDO::PARAM_INT);
+        $requetePrepare->execute();
+        return $requetePrepare->rowCount()>0;
+    }
+
+    public function modifierSourceRevenu($sourceId, $newLibelle){
+        $requetePrepare=PdoMaaserApp::$monPdo->prepare(
+            'UPDATE sources_revenu SET libelle = :unLibelle WHERE id = :sourceId'
+        );
+        $requetePrepare->bindParam(':sourceId',$sourceId,PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unLibelle',$newLibelle,PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->rowCount()>0;
+    }
+
 }
 
 ?>

@@ -4,11 +4,17 @@
 require_once 'includes/classPDO.php';
 require_once 'includes/ftc.php';
 
+session_start();
+
+$estConnecte = estConnecte();
+
 $bdd=PdoMaaserApp::getPdoMaaserApp();
 
-session_start();
 $uc = filter_input(INPUT_GET, 'uc', FILTER_SANITIZE_SPECIAL_CHARS);
-if(empty($uc)){
+
+if(empty($uc) && $estConnecte){
+    $uc = "menuPrincipal";
+}elseif(empty($uc)){
     $uc = "accueil";
 }
 switch ($uc) {
